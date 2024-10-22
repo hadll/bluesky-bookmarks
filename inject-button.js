@@ -15,10 +15,45 @@ function getSizeInBytes(object) {
   return new Blob([jsonStr]).size;
 }
 
+function waitForElm(selector) {
+  return new Promise(resolve => {
+      if (document.querySelector(selector)) {
+          return resolve(document.querySelector(selector));
+      }
+
+      const observer = new MutationObserver(mutations => {
+          if (document.querySelector(selector)) {
+              observer.disconnect();
+              resolve(document.querySelector(selector));
+          }
+      });
+
+      // If you get "parameter 1 is not of type 'Node'" error, see https://stackoverflow.com/a/77855838/492336
+      observer.observe(document.body, {
+          childList: true,
+          subtree: true
+      });
+  });
+}
+
 function saveData(newBookmark) {
   chrome.storage.local.get(['bookmarks'], (result) => {
+    var updatedArray
     let currentArray = result['bookmarks'] || [];
-    const updatedArray = [...currentArray, newBookmark];
+    if (bookmark_pressed){
+      updatedArray = [...currentArray, newBookmark];
+    }else{
+      console.log(currentArray.length)
+      console.log(currentArray)
+      for (i = currentArray.length - 1; i >= 0; i--) {
+        if (currentArray[i][1] == newBookmark[1]) {
+          updatedArray = currentArray
+          updatedArray.splice(i,1)
+          i = 0
+        }
+      }
+    }
+
     chrome.storage.local.getBytesInUse(['bookmarks'], (currentBytes) => {
       const newDataSize = getSizeInBytes({ 'bookmarks': updatedArray });
       const projectedSize = currentBytes - getSizeInBytes(result) + newDataSize;
@@ -26,7 +61,7 @@ function saveData(newBookmark) {
         alert(`You've run out of bookmark space... How... Go touch grass`);
       } else {
         chrome.storage.local.set({ 'bookmarks': updatedArray }, () => {
-          console.log(`Bookmark added! New size: ${projectedSize} bytes.`);
+          console.log(`Bookmarks updated! New size: ${projectedSize} bytes.`);
           console.log(updatedArray)
         });
       }
@@ -66,23 +101,51 @@ async function getData(api_url) {
 
 async function addBookmark() {
   bookmark_pressed = !bookmark_pressed
+  const api_url = document.head.querySelector('[type="application/json+oembed"]').href;
   if (bookmark_pressed) {
     bookmark_div.firstChild.firstChild.setAttribute("d", bookmark_filled)
     bookmark_div.firstChild.firstChild.setAttribute("fill", bluesky_blue)
-    const api_url = document.head.querySelector('[type="application/json+oembed"]').href;
-    console.log(await getData(api_url))
+    const to_be_gone = document.querySelectorAll('[data-testid="shareBtn"]');
+    for (i=0;i<to_be_gone.length-1;i++){
+      if (to_be_gone.length>1){
+        to_be_gone[0].parentNode.remove()
+      }
+    }
+    
   } else {
     bookmark_div.firstChild.firstChild.setAttribute("d", bookmark_path)
     bookmark_div.firstChild.firstChild.setAttribute("fill", default_gray)
   }
-
+  await getData(api_url)
 
 
 
 }
 
-window.addEventListener('load', function () {
-  const share_button = document.querySelector('[data-testid="shareBtn"]');
+async function addButton (event) {
+  var current_url
+  if (event == undefined){
+    current_url = window.location.href
+  }else{
+    current_url = event.destination.url;
+  }
+  const spliturl = current_url.split("/")
+  if (spliturl[spliturl.length-2] != "post"){
+    return
+  }
+
+  console.log("about to wait for buttons")
+
+
+  const to_be_gone = document.querySelectorAll('[data-testid="shareBtn"]');
+  if (to_be_gone.length>1){
+    to_be_gone[0].parentNode.remove()
+  }
+
+  const share_button = await waitForElm('[data-testid="shareBtn"]')
+  console.log("finished the wait for buttons")
+  console.log(share_button)
+
   const share_div = share_button.parentNode;
   const buttons_container = share_div.parentNode;
   bookmark_div = share_button.cloneNode(true);
@@ -91,13 +154,11 @@ window.addEventListener('load', function () {
 
   chrome.storage.local.get(['bookmarks'], (result) => {
     let bookmarks = result['bookmarks'] || [];
-    const current_url = this.window.location.href;
     const url_without_query = current_url.split("?")[0];
     const last_index = url_without_query.lastIndexOf("/");
     const post_id = url_without_query.substring(last_index + 1);
-    console.log(post_id)
-    console.log(bookmarks.length)
-    for (i = bookmarks.length - 1; i > 0; i--) {
+    console.log(bookmarks)
+    for (i = bookmarks.length - 1; i >= 0; i--) {
       console.log(bookmarks[i][1])
       if (bookmarks[i][1] == post_id) {
         // we've already bookmarked this
@@ -111,5 +172,7 @@ window.addEventListener('load', function () {
   });
 
   bookmark_div.addEventListener("click", addBookmark)
-})
+}
 
+window.navigation.addEventListener("navigate", addButton)
+addButton()
