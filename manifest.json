@@ -1,0 +1,25 @@
+{
+    "manifest_version": 3,
+    "name": "Run script automatically",
+    "description": "Runs a script on bsky.app automatically when user installs the extension",
+    "version": "1.0",
+    "content_scripts": [
+        {
+            "js": [
+                "inject-button.js"
+            ],
+            "matches": [
+                "https://bsky.app/*"
+            ]
+        }
+    ],
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "https://embed.bsky.app/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    }
+}
