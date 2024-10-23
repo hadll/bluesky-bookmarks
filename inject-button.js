@@ -105,34 +105,36 @@ async function addBookmark() {
   if (bookmark_pressed) {
     bookmark_div.firstChild.firstChild.setAttribute("d", bookmark_filled)
     bookmark_div.firstChild.firstChild.setAttribute("fill", bluesky_blue)
-    // const to_be_gone = document.querySelectorAll('[data-testid="shareBtn"]');
-    // for (i=0;i<to_be_gone.length-1;i++){
-    //   if (to_be_gone.length>1){
-    //     to_be_gone[0].parentNode.remove()
-    //   }
-    // }
+    
     
   } else {
     bookmark_div.firstChild.firstChild.setAttribute("d", bookmark_path)
     bookmark_div.firstChild.firstChild.setAttribute("fill", default_gray)
   }
-  const button = document.querySelector('[data-testid="bookmarkBtn"]')
-  // fragile magic time
-  const image = button.parentNode.parentNode.parentNode.firstChild.children[1].firstChild.firstChild.firstChild.firstChild.firstChild.firstChild
+  const buttons = document.querySelectorAll('[data-testid="bookmarkBtn"]') 
+  const button = buttons[Math.min(buttons.length-1,6)]
+  console.log(button)
+  const media_container = button.parentNode.parentNode.parentNode.firstChild
+  const images = media_container.getElementsByTagName("img")
+  const image = images[0]
+  const context_container = media_container.parentNode.parentNode.firstChild
 
-  console.log(image)
-  var did
+  var pfp_src = context_container.getElementsByTagName("img")[0].src.split("/")
+
+  var did = pfp_src[pfp_src.length-2].replace("did:plc:","")
   var cid
-  if (image.src != undefined) {
+  if (image != undefined) {
     // if its an image
     const image_src = image.src.split("/")
     cid = image_src[7].replace("@jpeg","")
-    did = image_src[6].replace("did:plc:","")
-  }else if (image.firstChild != undefined){
-    // video
-    const video_src = image.firstChild.firstChild.getAttribute("poster").split("/")
-    cid = video_src[video_src.length-2]
-    did = video_src[video_src.length-3].replace("did%3Aplc%3A","")
+  }else{
+    // not an image lets see if we can get a video
+    const video = media_container.getElementsByTagName("video")[0]
+    if (video != undefined){
+      // video
+      const video_src = video.getAttribute("poster").split("/")
+      cid = video_src[video_src.length-2]
+    }
   }
 
   const url = window.location.href
