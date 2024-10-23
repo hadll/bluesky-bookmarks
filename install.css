@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Almarai&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+body{
+    background-color: #2a373f;
+    color: aliceblue;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+}
+div{
+    width: 50%;
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #8596a1;
+    padding: 50px;
+    margin: auto;
+    margin-top: 100px;
+}
+h1{
+    text-align: center;
+}
+img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
