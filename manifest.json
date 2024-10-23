@@ -25,9 +25,6 @@
     "permissions": [
         "storage"
     ],
-    "host_permissions": [
-        "https://embed.bsky.app/*"
-    ],
     "background": {
         "service_worker": "background.js"
     }
