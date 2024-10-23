@@ -129,7 +129,13 @@ async function addButton(event) {
   const share_div = share_button.parentNode;
   bookmark_div = share_button.cloneNode(true);
   bookmark_div.setAttribute("data-testid", "bookmarkBtn")
+  bookmark_div.setAttribute("aria-label", "Bookmark")
   share_div.insertAdjacentElement("beforebegin", bookmark_div)
+
+  const all_bookmark_buttons = share_div.parentNode.querySelectorAll('[data-testid="bookmarkBtn"]')
+  for(i=0;i<all_bookmark_buttons.length-1; i++){
+    all_bookmark_buttons[i].remove()
+  }
 
   chrome.storage.local.get(['bookmarks'], (result) => {
     let bookmarks = result['bookmarks'] || [];
