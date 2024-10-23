@@ -17,22 +17,22 @@ function getSizeInBytes(object) {
 
 function waitForElm(selector) {
   return new Promise(resolve => {
+    if (document.querySelector(selector)) {
+      return resolve(document.querySelector(selector));
+    }
+
+    const observer = new MutationObserver(mutations => {
       if (document.querySelector(selector)) {
-          return resolve(document.querySelector(selector));
+        observer.disconnect();
+        resolve(document.querySelector(selector));
       }
+    });
 
-      const observer = new MutationObserver(mutations => {
-          if (document.querySelector(selector)) {
-              observer.disconnect();
-              resolve(document.querySelector(selector));
-          }
-      });
-
-      // If you get "parameter 1 is not of type 'Node'" error, see https://stackoverflow.com/a/77855838/492336
-      observer.observe(document.body, {
-          childList: true,
-          subtree: true
-      });
+    // If you get "parameter 1 is not of type 'Node'" error, see https://stackoverflow.com/a/77855838/492336
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
   });
 }
 
@@ -40,15 +40,13 @@ function saveData(newBookmark) {
   chrome.storage.local.get(['bookmarks'], (result) => {
     var updatedArray
     let currentArray = result['bookmarks'] || [];
-    if (bookmark_pressed){
+    if (bookmark_pressed) {
       updatedArray = [...currentArray, newBookmark];
-    }else{
-      console.log(currentArray.length)
-      console.log(currentArray)
+    } else {
       for (i = currentArray.length - 1; i >= 0; i--) {
         if (currentArray[i][1] == newBookmark[1]) {
           updatedArray = currentArray
-          updatedArray.splice(i,1)
+          updatedArray.splice(i, 1)
           i = 0
         }
       }
@@ -61,59 +59,27 @@ function saveData(newBookmark) {
         alert(`You've run out of bookmark space... How... Go touch grass`);
       } else {
         chrome.storage.local.set({ 'bookmarks': updatedArray }, () => {
-          console.log(`Bookmarks updated! New size: ${projectedSize} bytes.`);
-          console.log(updatedArray)
+          // console.log(`Bookmarks updated! New size: ${projectedSize} bytes.`);
+          // console.log(updatedArray)
         });
       }
     });
   });
 }
 
-async function getData(api_url) {
-  chrome.runtime.sendMessage(
-    { type: "FETCH_DATA", url: api_url },
-    (response) => {
-      if (response.success) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(response.data.html, 'text/html');
-
-        // Extract values from the blockquote element
-        const blockquote = doc.querySelector('blockquote');
-        const blueskyUri = blockquote.getAttribute('data-bluesky-uri');
-        const blueskyCid = blockquote.getAttribute('data-bluesky-cid');
-
-        const didMatch = blueskyUri.match(/did:plc:(\w+)/);
-        const did = didMatch ? didMatch[1] : null;
-        // Extract the post ID from the URI (last segment)
-        const postId = blueskyUri.split('/').pop();
-
-        // Log the extracted information
-        console.log('Bluesky URI:', did);
-        console.log('Bluesky CID:', blueskyCid);
-        console.log('Post ID:', postId);
-        saveData([did, postId, blueskyCid])
-      } else {
-        console.error("Error:", response.error);
-      }
-    }
-  );
-}
-
 async function addBookmark() {
   bookmark_pressed = !bookmark_pressed
-  // const api_url = document.head.querySelector('[type="application/json+oembed"]').href;
   if (bookmark_pressed) {
     bookmark_div.firstChild.firstChild.setAttribute("d", bookmark_filled)
     bookmark_div.firstChild.firstChild.setAttribute("fill", bluesky_blue)
-    
-    
+
+
   } else {
     bookmark_div.firstChild.firstChild.setAttribute("d", bookmark_path)
     bookmark_div.firstChild.firstChild.setAttribute("fill", default_gray)
   }
-  const buttons = document.querySelectorAll('[data-testid="bookmarkBtn"]') 
-  const button = buttons[Math.min(buttons.length-1,6)]
-  console.log(button)
+  const buttons = document.querySelectorAll('[data-testid="bookmarkBtn"]')
+  const button = buttons[Math.min(buttons.length - 1, 6)]
   const media_container = button.parentNode.parentNode.parentNode.firstChild
   const images = media_container.getElementsByTagName("img")
   const image = images[0]
@@ -121,59 +87,46 @@ async function addBookmark() {
 
   var pfp_src = context_container.getElementsByTagName("img")[0].src.split("/")
 
-  var did = pfp_src[pfp_src.length-2].replace("did:plc:","")
+  var did = pfp_src[pfp_src.length - 2].replace("did:plc:", "")
   var cid
   if (image != undefined) {
     // if its an image
     const image_src = image.src.split("/")
-    cid = image_src[7].replace("@jpeg","")
-  }else{
+    cid = image_src[7].replace("@jpeg", "")
+  } else {
     // not an image lets see if we can get a video
     const video = media_container.getElementsByTagName("video")[0]
-    if (video != undefined){
+    if (video != undefined) {
       // video
       const video_src = video.getAttribute("poster").split("/")
-      cid = video_src[video_src.length-2]
+      cid = video_src[video_src.length - 2]
     }
   }
 
   const url = window.location.href
   const pid = url.split("/").pop().split("?")[0]
 
-  saveData([did, pid ,cid])
-  // await getData(api_url)
-
-
-
+  saveData([did, pid, cid])
 }
 
-async function addButton (event) {
-  bookmark_pressed=false
+async function addButton(event) {
+  bookmark_pressed = false
   var current_url
-  if (event == undefined){
+  if (event == undefined) {
     current_url = window.location.href
-  }else{
+  } else {
     current_url = event.destination.url;
   }
   const spliturl = current_url.split("/")
-  if (spliturl[spliturl.length-2] != "post"){
+  if (spliturl[spliturl.length - 2] != "post") {
     return
   }
-
-  console.log("about to wait for buttons")
-
-
   const to_be_gone = document.querySelectorAll('[data-testid="shareBtn"]');
-  if (to_be_gone.length>1){
+  if (to_be_gone.length > 1) {
     to_be_gone[0].parentNode.remove()
   }
-
   const share_button = await waitForElm('[data-testid="shareBtn"]')
-  console.log("finished the wait for buttons")
-  console.log(share_button)
-
   const share_div = share_button.parentNode;
-  const buttons_container = share_div.parentNode;
   bookmark_div = share_button.cloneNode(true);
   bookmark_div.setAttribute("data-testid", "bookmarkBtn")
   share_div.insertAdjacentElement("beforebegin", bookmark_div)
@@ -183,9 +136,7 @@ async function addButton (event) {
     const url_without_query = current_url.split("?")[0];
     const last_index = url_without_query.lastIndexOf("/");
     const post_id = url_without_query.substring(last_index + 1);
-    console.log(bookmarks)
     for (i = bookmarks.length - 1; i >= 0; i--) {
-      console.log(bookmarks[i][1])
       if (bookmarks[i][1] == post_id) {
         // we've already bookmarked this
         bookmark_div.firstChild.firstChild.setAttribute("d", bookmark_filled)
