@@ -1,0 +1,60 @@
+body{
+    width: 400px;
+    height: 600px;
+    font-family: "Inter", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    color: hsl(211, 99.1%, 56.1%);
+}
+#page-selector > * > *{
+    display: inline-block;
+    vertical-align:middle;
+}
+#current-page-input-form > input{
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 4px;
+    border-color: hsl(211, 99.1%, 56.1%);
+    width: 40px;
+    height: 30px;
+    font-size: large;
+    font-family: "Inter", serif;
+    text-align: center;
+}
+#current-page > h1{
+    cursor: pointer;
+}
+#page-selector{
+    padding-top: 30px;
+    padding-bottom: 20px;
+    text-align: center;
+}
+#page-selector > * > *{
+    margin: 0px;
+}
+#nearby-pages > *{
+    width: 30px;
+    cursor: pointer;
+}
+#nearby-pages > .page-elipses{
+    cursor: default;
+}
+#page-size > *{
+    margin-top: 10px;
+}
+#page-size > p{
+    cursor: default;
+}
+#page-size-input-form > input{
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: hsl(211, 99.1%, 56.1%);
+    width: 20px;
+    height: 60px;
+    font-size: large;
+    font-family: "Inter", serif;
+    text-align: center;
+    color: hsl(211, 99.1%, 56.1%);
+}

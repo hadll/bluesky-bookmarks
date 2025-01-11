@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bookmarks</title>
-    <style>
-        body{
-            width: 400px;
-            height: 600px;
-        }
-
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="viewer.css">
     <script src="embed.js"></script>
     <script src="bookmark-viewer.js"></script>
 </head>
@@ -19,6 +16,38 @@
         <img style="width: 48px; height: 48px;" src="images/logo-128.png">
         <a href="http://www.ko-fi.com/haddle" target="_blank"><img style="height: 48px; float:right;" src="images/support_me_on_kofi_blue.webp" alt="Support me on Ko-Fi!"></a>
     </header>
-    
+
+    <div id="posts">
+
+    </div>
+
+    <div class="page-selector" id="page-selector">
+        <div id="current-page">
+            <h1 id="previous-page-button"><</h1>
+            <form id="current-page-input-form">
+                <input type="text" id="current-page-input">
+            </form>
+            <h1 id="next-page-button">></h1>
+        </div>
+        <div id="nearby-pages">
+            <p>0</p>
+            <p class="page-elipses">...</p>
+            <p id="previous3">9</p>
+            <p id="previous2">10</p>
+            <p id="previous1">11</p>
+            <p id="future1">13</p>
+            <p id="future2">14</p>
+            <p id="future3">15</p>
+            <p class="page-elipses">...</p>
+            <p>60</p>
+        </div>
+        <div id="page-size">
+            <p>Show </p>
+            <form id="page-size-input-form">
+                <input type="text" id="page-size-input">
+            </form>
+            <p>Posts Per Page</p>
+        </div>
+    </div>
 </body>
 </html>
