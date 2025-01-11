@@ -3,7 +3,7 @@ body{
     height: 600px;
     font-family: "Inter", serif;
     font-optical-sizing: auto;
-    font-weight: 400;
+    font-weight: 600;
     font-style: normal;
     color: hsl(211, 99.1%, 56.1%);
 }
@@ -29,6 +29,7 @@ body{
     padding-top: 30px;
     padding-bottom: 20px;
     text-align: center;
+    font-size: large;
 }
 #page-selector > * > *{
     margin: 0px;
