@@ -39,33 +39,33 @@ function update_page_display(){
     const nearby_pages = document.getElementById("nearby-pages")
     const last_page = Math.ceil(bookmarks.length/page_size)-1
     if (page_number >= 4) {
-        nearby_pages.children[0].innerHTML = "0"
-        nearby_pages.children[1].innerHTML = "..."
+        nearby_pages.children[0].innerText = "0"
+        nearby_pages.children[1].innerText = "..."
         
     }else{
-        nearby_pages.children[0].innerHTML = ""
-        nearby_pages.children[1].innerHTML = ""
+        nearby_pages.children[0].innerText = ""
+        nearby_pages.children[1].innerText = ""
         
     }
     if (page_number <= last_page-4) {
-        nearby_pages.children[9].innerHTML = last_page.toString()
-        nearby_pages.children[8].innerHTML = "..."
+        nearby_pages.children[9].innerText = last_page.toString()
+        nearby_pages.children[8].innerText = "..."
     }else{
-        nearby_pages.children[9].innerHTML = ""
-        nearby_pages.children[8].innerHTML = ""
+        nearby_pages.children[9].innerText = ""
+        nearby_pages.children[8].innerText = ""
     }
     for (let i = 1; i<=3; i++) {
         var previous_page_number = document.getElementById("previous"+i.toString())
         if (page_number-i >= 0) {
-            previous_page_number.innerHTML = (page_number-i).toString()
+            previous_page_number.innerText = (page_number-i).toString()
         }else{
-            previous_page_number.innerHTML = ""
+            previous_page_number.innerText = ""
         }
         var future_page_number = document.getElementById("future"+i.toString())
         if (page_number+i<=last_page) {
-            future_page_number.innerHTML = (page_number+i).toString()
+            future_page_number.innerText = (page_number+i).toString()
         }else{
-            future_page_number.innerHTML = ""
+            future_page_number.innerText = ""
         }
     }
 }
@@ -103,7 +103,7 @@ function change_page_size(new_value){
     var new_value = Number(inputPageSizeElement.value)
     if (new_value != page_size){
         // make sure they actually changed it
-        if (isNaN(new_value) || new_value<0) {
+        if (isNaN(new_value) || new_value<1) {
             return
         }
         page_number = Math.floor(Math.min(bookmarks.length - 1, page_size*(page_number + 1) - 1) / new_value)
@@ -121,7 +121,7 @@ function change_page_size(new_value){
 
 function click_page_number(number_element){
     console.log(number_element)
-    inputPageNumberElement.value = Number(number_element.innerHTML)
+    inputPageNumberElement.value = Number(number_element.innerText)
     change_page()
 }
 
