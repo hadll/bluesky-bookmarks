@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Bluesky Bookmarks",
     "description": "Adds a bookmark button to Bluesky posts",
-    "version": "2",
+    "version": "2.0.1",
     "action":{
         "default_popup":"index.html"
     },
