@@ -100,7 +100,7 @@ async function addButton(event) {
   const old_bookmark_buttons = document.querySelectorAll('[data-testid="postBookmarkBtn"]')
 
   old_bookmark_buttons.forEach(element => {
-    element.parentNode.remove()
+    element.remove()
   });
 
   const share_buttons = document.querySelectorAll('[data-testid="postShareBtn"]');
