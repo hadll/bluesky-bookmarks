@@ -106,14 +106,12 @@ async function addButton(event) {
   const share_buttons = document.querySelectorAll('[data-testid="postShareBtn"]');
 
   var share_button
-  console.log(share_buttons.length)
   if (share_buttons.length == 0) {
     share_button = await waitForElm('[data-testid="postShareBtn"]')
   }else{
     share_button = share_buttons[share_buttons.length-1]
   }
 
-  console.log(share_button)
   const share_div = share_button.parentNode.parentNode.parentNode;
   bookmark_div = share_button.cloneNode(true);
   bookmark_div.setAttribute("data-testid", "bookmarkBtn");
