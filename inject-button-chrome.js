@@ -121,12 +121,22 @@ async function addButton(event) {
   if (spliturl[spliturl.length - 2] != "post") {
     return
   }
-  const to_be_gone = document.querySelectorAll('[data-testid="shareBtn"]');
-  if (to_be_gone.length > 1) {
-    to_be_gone[0].parentNode.remove()
+  const old_bookmark_buttons = document.querySelectorAll('[data-testid="postBookmarkBtn"]')
+
+  old_bookmark_buttons.forEach(element => {
+    element.parentNode.remove()
+  });
+
+  const share_buttons = document.querySelectorAll('[data-testid="postShareBtn"]');
+
+  var share_button
+  if (share_buttons.length == 0) {
+    share_button = await waitForElm('[data-testid="postShareBtn"]')
+  }else{
+    share_button = share_buttons[share_buttons.length-1]
   }
-  const share_button = await waitForElm('[data-testid="shareBtn"]')
-  const share_div = share_button.parentNode;
+
+  const share_div = share_button.parentNode.parentNode.parentNode;
   bookmark_div = share_button.cloneNode(true);
   bookmark_div.setAttribute("data-testid", "bookmarkBtn")
   bookmark_div.setAttribute("aria-label", "Bookmark")
